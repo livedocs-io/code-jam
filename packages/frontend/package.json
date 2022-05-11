@@ -10,10 +10,15 @@
     "@types/node": "^16.11.34",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.3",
+    "@types/recharts": "^1.8.23",
+    "cors": "^2.8.5",
     "react": "^18.1.0",
+    "react-datepicker": "^4.7.0",
     "react-dom": "^18.1.0",
     "react-scripts": "5.0.1",
+    "recharts": "^2.1.9",
     "typescript": "^4.6.4",
+    "uuid": "^8.3.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -42,5 +47,9 @@
   },
   "author": "Arsalan Bashir <a@livedocs.com>",
   "homepage": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/react-datepicker": "^4.4.1",
+    "@types/uuid": "^8.3.4"
+  }
 }

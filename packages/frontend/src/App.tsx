@@ -1,24 +1,17 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Dashboard from './Dashboard';
+import LogIn from './Login';
 
 function App() {
+  const isLogged = localStorage.getItem('api-key') !== null;
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+       <p className='App-header'>
+        Livedocs code jam!
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {isLogged ? (<Dashboard/>):(<LogIn/>)}
     </div>
   );
 }
