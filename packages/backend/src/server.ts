@@ -5,11 +5,13 @@ import sqlite3 from "sqlite3";
 import { createUserTableQuery } from "./queries";
 
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 4000;
 
-app.use(cors({
-  origin:'https://3000-livedocsio-codejam-4psx72aae2r.ws-us44.gitpod.io'
-}));
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 app.use(urlencoded({ extended: false }));
 app.use(json());
 
