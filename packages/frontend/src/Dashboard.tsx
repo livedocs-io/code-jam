@@ -43,7 +43,7 @@ function LogIn() {
   const apiKey = localStorage.getItem('api-key');
 
   useEffect(() => {
-    fetch('http://localhost:8080/', {
+    fetch('https://8080-livedocsio-codejam-4psx72aae2r.ws-us44.gitpod.io/', {
       method: 'POST',
       headers: {
         Accept: "application/json",
