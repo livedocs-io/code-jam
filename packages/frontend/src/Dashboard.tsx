@@ -5,44 +5,22 @@ import DatePicker from "react-datepicker";
 import "./App.css";
 import "react-datepicker/dist/react-datepicker.css";
 
-const data = [
-  {
-    name: "Page A",
-    uv: 4000,
-  },
-  {
-    name: "Page B",
-    uv: 3000,
-  },
-  {
-    name: "Page C",
-    uv: 2000,
-  },
-  {
-    name: "Page D",
-    uv: 2780,
-  },
-  {
-    name: "Page E",
-    uv: 1890,
-  },
-  {
-    name: "Page F",
-    uv: 2390,
-  },
-  {
-    name: "Page G",
-    uv: 3490,
-  },
-];
+
+type DataPoint = {
+  value: number | null
+  date: string
+}
 
 function LogIn() {
   const [date, setDate] = useState<Date>(new Date());
+  const [ticker, setTicker] = useState<string>("AAPL");
+  const [data, setData] = useState<DataPoint[]>([]);
+  const [force, setForce] = useState(false);
 
   const apiKey = localStorage.getItem("api-key");
 
   useEffect(() => {
-    fetch("http://localhost:4000", {
+    fetch(`http://localhost:4000/${ticker}?force=${force}`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -53,12 +31,21 @@ function LogIn() {
         date,
       }),
     })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("ok");
-        console.log(data);
+      .then((response) => {
+        if (response.ok) {
+          return response.json()
+        }
+        else {
+          throw(new Error("Failed to fetch data"))
+        }
+      })
+      // extract to function
+      .then((data: DataPoint[]) => setData(data.map((v) => ({ value: v.value, date: new Date(parseInt(v.date)).toDateString() }))))
+      .catch((error) => {
+        setData([])
+        alert(error)
       });
-  }, [apiKey, date]);
+  }, [apiKey, date, ticker, force]);
 
   return (
     <div className="page">
@@ -67,12 +54,28 @@ function LogIn() {
         <p className="api-key-holder">{apiKey}</p>
       </div>
 
+      <label htmlFor="tickers">Choose a ticker:</label>
+
+      <div>
+        <select name="tickers" id="tickers" value={ticker} onChange={(e) => setTicker(e.target.value)}>
+          <option value="LDOCS">Livedocs</option>
+          <option value="AAPL">Apple</option>
+          <option value="GOOGL">Alphabet</option>
+          <option value="MSFT">Microsoft</option>
+          <option value="TSLA">Tesla</option>
+          <option value="AMZN">Amazon</option>
+        </select>
+        <label>
+          <input type="checkbox" checked={force} onChange={() => setForce(!force)} />
+          Force refresh
+        </label>
+      </div>
       <div className="graph">
         <LineChart width={500} height={300} data={data}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.3)" />
-          <XAxis dataKey="name" />
+          <XAxis dataKey="date" />
           <Tooltip />
-          <Line type="monotone" dataKey="uv" stroke="#000" />
+          <Line connectNulls type="monotone" dataKey="value" stroke="#000" />
         </LineChart>
       </div>
       <div>
