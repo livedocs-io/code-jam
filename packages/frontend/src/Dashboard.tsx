@@ -1,80 +1,58 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis } from "recharts";
 import DatePicker from "react-datepicker";
 
-import "./App.css";
 import "react-datepicker/dist/react-datepicker.css";
+import "./App.css";
 
-const data = [
-  {
-    name: "Page A",
-    uv: 4000,
-  },
-  {
-    name: "Page B",
-    uv: 3000,
-  },
-  {
-    name: "Page C",
-    uv: 2000,
-  },
-  {
-    name: "Page D",
-    uv: 2780,
-  },
-  {
-    name: "Page E",
-    uv: 1890,
-  },
-  {
-    name: "Page F",
-    uv: 2390,
-  },
-  {
-    name: "Page G",
-    uv: 3490,
-  },
-];
+import { fetchStockPrice } from "./api";
+import { StockPrice } from "./types";
 
-function LogIn() {
-  const [date, setDate] = useState<Date>(new Date());
-
+function Dashboard() {
   const apiKey = localStorage.getItem("api-key");
+  const [date, setDate] = useState<Date>(new Date());
+  const [stockData, setStockData] = useState<StockPrice[]>([]);
+
+  const handleFetchStockPrice = async (apiKey: string | null, date?: Date) => {
+    if (!apiKey) return;
+
+    const time = date || new Date();
+    const result = await fetchStockPrice(apiKey, time);
+    setStockData((prevData) => [
+      ...prevData,
+      { ...result, date: time.toISOString().split('T')[0] }
+    ]);
+  };
 
   useEffect(() => {
-    fetch("http://localhost:4000", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=UTF-8",
-        ApiKey: `${apiKey}`,
-      },
-      body: JSON.stringify({
-        date,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("ok");
-        console.log(data);
-      });
-  }, [apiKey, date]);
+    handleFetchStockPrice(apiKey, date);
+  }, [apiKey, date]); // eslint-disable-line
 
   return (
     <div className="page">
-      <div>
+      <div className="header">
         <p className="page-header">Your API key is:</p>
-        <p className="api-key-holder">{apiKey}</p>
+
+        <div className="button-wrapper">
+          <p className="api-key-holder">{apiKey}</p>
+          <button
+            className="refresh-button"
+            onClick={() => handleFetchStockPrice(apiKey)}
+          >
+            Refresh Data
+          </button>
+        </div>
       </div>
 
       <div className="graph">
-        <LineChart width={500} height={300} data={data}>
+        <LineChart width={500} height={300} data={stockData}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.3)" />
           <XAxis dataKey="name" />
           <Tooltip />
-          <Line type="monotone" dataKey="uv" stroke="#000" />
+          <Line type="monotone" dataKey="price" stroke="#000" />
         </LineChart>
       </div>
+
       <div>
         <DatePicker
           selected={date}
@@ -95,4 +73,4 @@ function LogIn() {
   );
 }
 
-export default LogIn;
+export default Dashboard;
