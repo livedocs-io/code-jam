@@ -1,6 +1,3 @@
-.App {
-}
-
 .App-header {
   color: white;
   font-size: 20px;
@@ -19,6 +16,34 @@
   padding: 10px;
   border-radius: 3px;
   font-family: monospace;
+}
+
+.header {
+  width: 500px;
+}
+
+.button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.refresh-button {
+  background: purple;
+  color: white;
+  border-radius: 3px;
+  padding: 10px 15px;
+
+  cursor: pointer;
+  outline: none;
+  border: none;
+  transition: all 150ms ease;
+}
+
+.refresh-button:hover {
+  background: #61dafb;
+  color: black
 }
 
 .graph{
