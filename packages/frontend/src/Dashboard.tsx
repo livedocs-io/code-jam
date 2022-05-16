@@ -5,7 +5,7 @@ import DatePicker from "react-datepicker";
 import "./App.css";
 import "react-datepicker/dist/react-datepicker.css";
 
-const data = [
+let stockData = [
   {
     name: "Page A",
     uv: 4000,
@@ -36,13 +36,18 @@ const data = [
   },
 ];
 
+function GetStockReq(symbol:string, datestring:string) {
+  //e.preventDefault();
+}
+
 function LogIn() {
   const [date, setDate] = useState<Date>(new Date());
+  const [stockSymbol, setStockSymbol] = useState('APPL');
 
   const apiKey = localStorage.getItem("api-key");
 
   useEffect(() => {
-    fetch("http://localhost:4000", {
+    fetch("http://localhost:4000/dummy/"+stockSymbol+"/"+date.toDateString(), {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -55,10 +60,10 @@ function LogIn() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("ok");
         console.log(data);
+        stockData = data;
       });
-  }, [apiKey, date]);
+  }, [apiKey, date, stockSymbol]);
 
   return (
     <div className="page">
@@ -68,7 +73,7 @@ function LogIn() {
       </div>
 
       <div className="graph">
-        <LineChart width={500} height={300} data={data}>
+        <LineChart width={500} height={300} data={stockData}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.3)" />
           <XAxis dataKey="name" />
           <Tooltip />
@@ -81,6 +86,15 @@ function LogIn() {
           onChange={(date: Date) => setDate(date)}
           withPortal
         />
+        <div>
+          <input type='text' placeholder='Eg. APPL' onBlur={e => setStockSymbol(e.target.value.toUpperCase())}>
+          </input>
+        </div>
+        <button>
+          Fetch data (user clicks this)
+        </button>
+        <hr/>
+
         <div
           className="App-link"
           onClick={() => {
@@ -96,3 +110,4 @@ function LogIn() {
 }
 
 export default LogIn;
+

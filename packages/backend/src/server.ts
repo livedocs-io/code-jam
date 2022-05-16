@@ -2,10 +2,46 @@ import cors from "cors";
 import express, { urlencoded, json } from "express";
 import fetch from "node-fetch";
 import sqlite3 from "sqlite3";
-import { createUserTableQuery } from "./queries";
+import { createUserTableQuery, PriceDetails } from "./queries";
 
 const app = express();
 const port = process.env.PORT || 4000;
+
+// we presume this is updated once a day via cron rather than here
+
+let stockPrices = new Map<string, PriceDetails>([
+  ["LDOCS", new PriceDetails({
+      name:"Livedocs",
+      prices:[],
+      queriedToday:0
+    })],
+  ["APPL", new PriceDetails({
+      name:"Apple",
+      prices:[],
+      queriedToday:0
+    })],
+  ["GOOGL", new PriceDetails({
+      name:"Alphabet",
+      prices:[],
+      queriedToday:0
+    })],
+  ["MSFT", new PriceDetails({
+      name:"Microsoft",
+      prices:[],
+      queriedToday:0
+    })],
+  ["TSLA", new PriceDetails({
+      name:"Tesla",
+      prices:[],
+      queriedToday:0
+    })],
+  ["AMZN", new PriceDetails({
+      name:"Amazon",
+      prices:[],
+      queriedToday:0
+    })],
+]);
+
 
 app.use(
   cors({
@@ -53,11 +89,26 @@ app.get("/", (req, res) => {
   });
 });
 
-app.post("/", (req, res) => {
-  // get the data from the request
-  const auth = req.headers.apikey ?? null;
+// api for user to get stock prices from local data
+app.get('/user/:stock/:date', (req, res) => {
+  const auth = req.headers["apikey"] ?? null;
   if (auth) {
-    fetch("https://fakedaq-api.onrender.com/stock/AAPL", {
+    let s = req.params["stock"]
+    let d = req.params["date"]
+    res.send(stockPrices.get(s))
+  } else {
+    res.send({'Error':'Unauthorized!'})
+  }
+})
+
+
+// get the stock data from fakedaq
+app.post("/:stock/:date", (req, res) => {
+  const auth = req.headers["apikey"] ?? null;
+  if (auth) {
+    let s = req.params["stock"]
+    let d = req.params["date"]
+    fetch("https://fakedaq-api.onrender.com/stock/"+s, {
       method: "GET",
       headers: {
         "api-key": auth as string,
@@ -67,6 +118,28 @@ app.post("/", (req, res) => {
       .then((data) => {
         res.send(data);
       });
+  } else {
+    res.send({'Error':'Unauthorized!'})
+  }
+});
+
+// Dummy endpoint so we dont exceed limiter rate
+app.post("/dummy/:stock/:date", (req, res) => {
+  const auth = req.headers["apikey"] ?? null;
+  if (auth) {
+    let s = req.params["stock"]
+    let d = req.params["date"]
+    let p = (Math.floor(Math.random() * 100) + 1)
+
+    var priceObj = stockPrices.get(s)
+    priceObj.prices.push({'name':d,'uv':p})
+    priceObj.queriedToday += 1
+    if (priceObj.queriedToday < 10)
+      stockPrices.set(s, priceObj)
+    
+    res.send(priceObj.prices)
+  } else {
+    res.send({'Error':'Unauthorized!'})
   }
 });
 
@@ -74,3 +147,4 @@ app.post("/", (req, res) => {
 app.listen(port, () => {
   console.log(`server started at http://localhost:${port}`);
 });
+
