@@ -1,8 +1,8 @@
 {
   "name": "backend",
-  "version": "0.0.0",
-  "description": "> TODO: description",
-  "author": "Arsalan Bashir <a@livedocs.com>",
+  "version": "0.0.1",
+  "description": "Stock Challenge Submission",
+  "author": "Bugi Idris <ba2ra@virginia.edu>",
   "homepage": "",
   "license": "ISC",
   "main": "dist/server.js",
@@ -25,6 +25,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.1",
+    "node-cache": "^5.1.2",
     "node-fetch": "^2.6.7",
     "sqlite3": "^5.0.8"
   }

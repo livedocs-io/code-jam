@@ -1,5 +1,5 @@
 export const createUserTableQuery = `
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS user (
     id TEXT PRIMARY KEY,
-    date TEXT)
+    date TEXT);
     `;
