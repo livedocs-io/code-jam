@@ -4,9 +4,17 @@ export const createUserTableQuery = `
     date TEXT)
     `;
 
+export const createStockTableQuery = `
+    CREATE TABLE IF NOT EXISTS stocks (
+    symbol TEXT,
+    name TEXT,
+    date TEXT,
+    price FLOAT(32))
+    `;
 
-class PriceObj {
-    name:string
+export class PriceObj {
+    date:Date
+    name:string // for chart widget to display date 
     uv:number
     public constructor(init?:Partial<PriceObj>) {
         Object.assign(this, init);

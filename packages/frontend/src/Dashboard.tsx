@@ -36,18 +36,14 @@ let stockData = [
   },
 ];
 
-function GetStockReq(symbol:string, datestring:string) {
-  //e.preventDefault();
-}
-
 function LogIn() {
   const [date, setDate] = useState<Date>(new Date());
-  const [stockSymbol, setStockSymbol] = useState('APPL');
+  const [stockSymbol, setStockSymbol] = useState('LDOCS');
 
   const apiKey = localStorage.getItem("api-key");
 
   useEffect(() => {
-    fetch("http://localhost:4000/dummy/"+stockSymbol+"/"+date.toDateString(), {
+    fetch("http://localhost:4000/"+stockSymbol+"/"+date.toDateString(), {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -73,7 +69,8 @@ function LogIn() {
       </div>
 
       <div className="graph">
-        <LineChart width={500} height={300} data={stockData}>
+        Stock quote for {stockSymbol} <br/>
+        <LineChart width={800} height={500} data={stockData}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.3)" />
           <XAxis dataKey="name" />
           <Tooltip />
@@ -87,12 +84,15 @@ function LogIn() {
           withPortal
         />
         <div>
-          <input type='text' placeholder='Eg. APPL' onBlur={e => setStockSymbol(e.target.value.toUpperCase())}>
-          </input>
+          <select id="stockPick" onChange={e => setStockSymbol(e.target.value.toUpperCase())}>
+            <option value="LDOCS">LiveDocs</option>
+            <option value="APPL">Apple</option>
+            <option value="GOOGL">Alphabet</option>
+            <option value="MSFT">Microsoft</option>
+            <option value="TSLA">Tesla</option>
+            <option value="AMZN">Amazon</option>
+          </select>
         </div>
-        <button>
-          Fetch data (user clicks this)
-        </button>
         <hr/>
 
         <div
