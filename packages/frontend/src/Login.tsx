@@ -6,7 +6,7 @@ import './App.css';
 function LogIn() {
   return (
     <div className="page">
-       
+
         <div
           className="App-link"
           onClick={() => {
