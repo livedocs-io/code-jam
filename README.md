@@ -16,7 +16,7 @@ Fictional stock viewer written in Typescript, React.
 `GET /stock/:symbol`
 
 Request 
-`curl --header "api-key: test-key" http://localhost:8080/stock/AAPL`
+`curl --header "api-key: test-key" https://fakedaq-api.onrender.com/stock/AAPL`
 
 Response
 `{"name":"Apple","symbol":"AAPL","price":176.48}`
@@ -24,7 +24,7 @@ Response
 #### Reset the rate-limit for an API key (don't use this in the solution!!)
 
 Request
-`curl --header "api-key: test-key" http://localhost:8080/reset`
+`curl --header "api-key: test-key" https://fakedaq-api.onrender.com/reset`
 
 Response 
 `{"message":"Rate limit has been reset"}`
