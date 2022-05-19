@@ -5,7 +5,7 @@ import DatePicker from "react-datepicker";
 import "./App.css";
 import "react-datepicker/dist/react-datepicker.css";
 
-const data = [
+let stockData = [
   {
     name: "Page A",
     uv: 4000,
@@ -38,11 +38,12 @@ const data = [
 
 function LogIn() {
   const [date, setDate] = useState<Date>(new Date());
+  const [stockSymbol, setStockSymbol] = useState('LDOCS');
 
   const apiKey = localStorage.getItem("api-key");
 
   useEffect(() => {
-    fetch("http://localhost:4000", {
+    fetch("http://localhost:4000/"+stockSymbol+"/"+date.toDateString(), {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -55,10 +56,10 @@ function LogIn() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("ok");
         console.log(data);
+        stockData = data;
       });
-  }, [apiKey, date]);
+  }, [apiKey, date, stockSymbol]);
 
   return (
     <div className="page">
@@ -68,7 +69,8 @@ function LogIn() {
       </div>
 
       <div className="graph">
-        <LineChart width={500} height={300} data={data}>
+        Stock quote for {stockSymbol} <br/>
+        <LineChart width={800} height={500} data={stockData}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.3)" />
           <XAxis dataKey="name" />
           <Tooltip />
@@ -81,6 +83,18 @@ function LogIn() {
           onChange={(date: Date) => setDate(date)}
           withPortal
         />
+        <div>
+          <select id="stockPick" onChange={e => setStockSymbol(e.target.value.toUpperCase())}>
+            <option value="LDOCS">LiveDocs</option>
+            <option value="APPL">Apple</option>
+            <option value="GOOGL">Alphabet</option>
+            <option value="MSFT">Microsoft</option>
+            <option value="TSLA">Tesla</option>
+            <option value="AMZN">Amazon</option>
+          </select>
+        </div>
+        <hr/>
+
         <div
           className="App-link"
           onClick={() => {
@@ -96,3 +110,4 @@ function LogIn() {
 }
 
 export default LogIn;
+
