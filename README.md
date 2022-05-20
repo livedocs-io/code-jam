@@ -6,7 +6,9 @@ Fictional stock viewer written in Typescript, React.
 - Bootstrap the project `npm run setup`
 - Start the server by running `npm start`
 
-## Actual "Fakedaq" API docs
+## Actual "Robinhood Fake API" API docs
+
+It returns the API key's portfolio value taking into account how much of the given stock they own. For eg: 44 AAPL stocks would return AAPL value times 44. It knows the ownership amount. 
 
 #### Notes
 - API enforces a strict rate-limit of 10 requests per API key
