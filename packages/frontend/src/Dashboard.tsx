@@ -4,37 +4,7 @@ import DatePicker from "react-datepicker";
 
 import "./App.css";
 import "react-datepicker/dist/react-datepicker.css";
-
-// const data = [
-//   {
-//     name: "Page A",
-//     uv: 4000,
-//   },
-//   {
-//     name: "Page B",
-//     uv: 3000,
-//   },
-//   {
-//     name: "Page C",
-//     uv: 2000,
-//   },
-//   {
-//     name: "Page D",
-//     uv: 2780,
-//   },
-//   {
-//     name: "Page E",
-//     uv: 1890,
-//   },
-//   {
-//     name: "Page F",
-//     uv: 2390,
-//   },
-//   {
-//     name: "Page G",
-//     uv: 3490,
-//   },
-// ];
+import rest from './restApi';
 
 interface ResponseData {
   name: string,
@@ -43,34 +13,50 @@ interface ResponseData {
 
 function LogIn() {
   const [date, setDate] = useState<Date>(new Date());
+  const [retries, setRetries] = useState<number>(0);
   const [data, setData] = useState<Array<ResponseData>>([]);
 
-  const apiKey = localStorage.getItem("api-key");
+  const apiKey = localStorage.getItem("api-key") ?? "";
 
   useEffect(() => {
-    fetch("http://localhost:4000", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=UTF-8",
-        ApiKey: `${apiKey}`,
-      },
-      body: JSON.stringify({
-        date,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // console.log(data);
-        setData(data)
+      rest.getGraphData(date, apiKey)
+      .then((res: any) => {
+        console.log(res)
+        setData(res.data)
+        setRetries(res.rate_limit)
       });
   }, [apiKey, date]);
+
+  const onRefresh = () => {
+    if(retries > 0){
+       alert('refreshing... loading animation button would have been better..!!')
+      rest.refreshData(date, apiKey)
+      .then((res: any) => {
+        setData(res.data)
+        setRetries(res.rate_limit)
+      });
+    }else{
+      alert('You are out of retry limits...!!')
+    }
+  }
+
+  const floodDb = () => {
+    alert('Flooding db with fake data. For test purposes only !!')
+    rest.floodData(date, apiKey)
+    .then((res: any) => console.log(res));
+  }
 
   return (
     <div className="page">
       <div>
         <p className="page-header">Your API key is:</p>
         <p className="api-key-holder">{apiKey}</p>
+        <p onClick={floodDb} style={{
+          marginLeft: 20
+        }} className="api-key-holder">Flood DB</p>
+        <p onClick={onRefresh} style={{
+          marginLeft: 20
+        }} className="api-key-holder">Refresh: {retries}</p>
       </div>
 
       <div className="graph">

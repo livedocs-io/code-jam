@@ -47,7 +47,13 @@ app.post("/", async (req, res) => {
 
     utils.constructResonse(db, auth, stockId, date)
       .then(data => {
-        res.send(data)
+        utils.getUser(db, auth)
+        .then((user: User) => {
+          res.json({
+            rate_limit: user.rate_limit,
+            data: data
+          })
+        })
       })
       .catch((err) => {
         console.log("Someghing went wrong...", err)
@@ -60,12 +66,13 @@ app.post("/refresh", (req, res) => {
   const stockId = "AAPL";
   let date = req.body.date || new Date();
   date = new Date(date).toISOString().split("T")[0];
-
-  console.log(auth, date);
+  const currentDate = new Date().toISOString().split("T")[0];
 
   if (auth) {
     utils.getUser(db, auth).then((user: User) => {
-      if((user.date == date && user.rate_limit > 0) || user.date != date){
+      console.log(auth, currentDate, user);
+
+      if((user.date == currentDate && user.rate_limit > 0) || (user.date != currentDate)){
         api.getStockPrice(auth, stockId)
           .then(async (data: ApiResp) => {
             //  update the db records...
@@ -84,7 +91,7 @@ app.post("/refresh", (req, res) => {
                 //  format the response
                 //  { name: date, uv: value || 0(default) }
                 res.json({
-                  rate_limits: user.rate_limit - 1,
+                  rate_limit: user.rate_limit - 1,
                   data: response
                 })
               })
@@ -98,6 +105,19 @@ app.post("/refresh", (req, res) => {
           .catch((err) => {
             console.log(ERRORS['request_error'], err)
           })
+      } else {
+        utils.constructResonse(db, auth, stockId, date)
+          .then((response) => {
+            //  format the response
+            //  { name: date, uv: value || 0(default) }
+            res.json({
+              rate_limit: user.rate_limit,
+              data: response
+            })
+          })
+          .catch((err) => {
+            console.log("Someghing went wrong...", err)
+          });
       }
     });
   }

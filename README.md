@@ -36,3 +36,12 @@ Response
 - Microsoft `MSFT`
 - Tesla `TSLA`
 - Amazon `AMZN`
+
+
+# routes info
+- /refresh : refreshes fetches data externally and updates in the db if retries are left. Or just gathers the required info and sends back.
+- /flood : I created this for test purposes. It floods the db with ramdom data for last 30 days.
+- / : it creates user [if not created already]. Gathers required data and send them back for the 7 days. as asked.
+
+NOTE: 
+No additional package is installed for this.
