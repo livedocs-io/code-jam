@@ -2,12 +2,13 @@ export const QUERIES = [
     `CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
         date TEXT,
-        requests TEXT
+        rate_limit NUMBER
     )`,
     `CREATE TABLE IF NOT EXISTS records (
-        fusionid TEXT PRIMARY KEY,
-        date DATE,
-        value TEXT
+        fusionid TEXT NOT NULL,
+        date TEXT NOT NULL,
+        value DOUBLE,
+        PRIMARY KEY (fusionid, date)
     )`
 ];
     /**
