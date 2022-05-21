@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "start": "npx lerna run start --stream",
-    "setup": "npx lerna bootstrap"
+    "setup": "npx lerna bootstrap",
+    "setupdb": "npx lerna run setupdb"
   },
   "devDependencies": {
     "lerna": "^4.0.0"

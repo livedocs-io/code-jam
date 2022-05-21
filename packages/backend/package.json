@@ -9,8 +9,9 @@
   "scripts": {
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",
-    "start": "tsc-watch --onSuccess 'node ./dist/server.js'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsc-watch --onSuccess 'node ./dist/src/server.js'",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "setupdb": "node setup.db.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",
