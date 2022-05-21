@@ -77,7 +77,7 @@ app.post("/refresh", (req, res) => {
           .then(async (data: ApiResp) => {
             //  update the db records...
             console.log(data)
-            await utils.updateRecords(db, auth, stockId, date, data.price);
+            await utils.updateRecords(db, auth, stockId, currentDate, data.price);
 
             // generate the updated response from the database
 
@@ -96,7 +96,7 @@ app.post("/refresh", (req, res) => {
                 })
               })
               .catch((err) => {
-                console.log("Someghing went wrong...", err)
+                console.log("Somegthing went wrong...", err)
               });
 
             // here, update it's rate limit and current date to keep track of dailt request limits
